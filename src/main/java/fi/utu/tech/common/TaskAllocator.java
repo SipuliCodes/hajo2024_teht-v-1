@@ -1,5 +1,6 @@
 package fi.utu.tech.common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,6 +9,17 @@ import java.util.List;
 
 
 public class TaskAllocator {
+    public static List<List<Submission>> splitListIntoEqualParts(List<Submission> submissions, int parts) {
+        List<List<Submission>> subLists = new ArrayList<>();
+
+        int partSize = (int) Math.ceil((double) submissions.size() / parts );
+
+        for(int i = 0; i < submissions.size(); i += partSize) {
+            subLists.add(new ArrayList<>(submissions.subList(i, Math.min(i + partSize, submissions.size()))));
+        }
+
+        return subLists;
+    }
 
     /**
      * Allocator that creates list of two (2) GradingTask objects with each having half of the given submissions
@@ -16,8 +28,16 @@ public class TaskAllocator {
      */
     public static List<GradingTask> sloppyAllocator(List<Submission> submissions) {
         // TODO: Tehtävä 4
-        // Retruns null for now to suppress warnings
-        return null;
+        int parts = 2;
+        List<List<Submission>> splitSubmissions = splitListIntoEqualParts(submissions, parts);
+        List<GradingTask> gradingTasks = new ArrayList<>();
+        for(int i = 0; i < parts; i++) {
+            GradingTask gradingTask = new GradingTask();
+            gradingTask.setUngradedSubmissions(splitSubmissions.get(i));
+            gradingTasks.add(gradingTask);
+        }
+
+        return gradingTasks;
     }
 
 
