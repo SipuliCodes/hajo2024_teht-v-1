@@ -10,12 +10,14 @@ import java.util.List;
 
 public class TaskAllocator {
     public static List<List<Submission>> splitListIntoEqualParts(List<Submission> submissions, int parts) {
-        List<List<Submission>> subLists = new ArrayList<>();
+        List<List<Submission>> subLists = new ArrayList<>(parts);
 
-        int partSize = (int) Math.ceil((double) submissions.size() / parts );
+        for (int i = 0; i < parts; i++) {
+            subLists.add(new ArrayList<>());
+        }
 
-        for(int i = 0; i < submissions.size(); i += partSize) {
-            subLists.add(new ArrayList<>(submissions.subList(i, Math.min(i + partSize, submissions.size()))));
+        for (int i = 0; i < submissions.size(); i++) {
+            subLists.get(i % parts).add(submissions.get(i));
         }
 
         return subLists;
@@ -51,6 +53,15 @@ public class TaskAllocator {
     public static List<GradingTask> allocate(List<Submission> submissions, int taskCount) {
         // TODO: Tehtävä 5
         // Retruns null for now to suppress warnings
-        return null;
+        List<List<Submission>> splitSubmissions = splitListIntoEqualParts(submissions, taskCount);
+
+        List<GradingTask> gradingTasks = new ArrayList<>();
+        for(int i = 0; i < taskCount; i++) {
+            GradingTask gradingTask = new GradingTask();
+            gradingTask.setUngradedSubmissions(splitSubmissions.get(i));
+            gradingTasks.add(gradingTask);
+        }
+
+        return gradingTasks;
     }
 }
